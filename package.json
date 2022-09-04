@@ -1,0 +1,39 @@
+{
+  "name": "faucet-server",
+  "version": "0.0.1",
+  "description": "Token faucet for hashed network",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --watch",
+    "start:dev": "eval \"$(./set-env-dev.sh)\" npx nodemon src/index.js",
+    "start:uat": "eval \"$(./set-env-uat.sh)\" npx nodemon src/index.js"
+  },
+  "author": "Sebastian",
+  "license": "ISC",
+  "dependencies": {
+    "@fastify/cors": "^8.1.0",
+    "@fastify/env": "^4.1.0",
+    "@fastify/swagger": "^7.5.0",
+    "@polkadot/api": "^9.2.4",
+    "@polkadot/util": "^9.3.1",
+    "@smontero/jwt": "^0.0.1",
+    "fastify": "^4.5.3",
+    "fastify-plugin": "^4.2.1",
+    "http-errors": "^2.0.0",
+    "pg": "^8.8.0",
+    "pino-pretty": "^7.6.1",
+    "url-join": "^5.0.0"
+  },
+  "devDependencies": {
+    "@polkadot/keyring": "^9.7.2",
+    "@polkadot/util-crypto": "^9.7.2",
+    "@types/jest": "^27.5.1",
+    "eslint": "^8.23.0",
+    "eslint-config-standard": "^17.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-n": "^15.2.5",
+    "eslint-plugin-promise": "^6.0.1",
+    "jest": "^28.1.0",
+    "nodemon": "^2.0.16"
+  }
+}

@@ -1,0 +1,39 @@
+version: '3.6'
+services:
+  postgres:
+    image: postgres:14
+    restart: always
+    # network_mode: "host"
+    ports:
+      - "5432:5432"
+    volumes:
+    - db_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: postgrespassword
+volumes:
+  db_data:
+  # graphql-engine:
+  #   image: hasura/graphql-engine:v2.6.2
+  #   ports:
+  #   - "8080:8080"
+  #   # network_mode: "host"
+  #   depends_on:
+  #   - "postgres"
+  #   restart: always
+  #   environment:
+  #     ## postgres database to store Hasura metadata
+  #     HASURA_GRAPHQL_METADATA_DATABASE_URL: postgres://postgres:postgrespassword@postgres:5432/postgres
+  #     ## this env var can be used to add the above postgres database to Hasura as a data source. this can be removed/updated based on your needs
+  #     HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:postgrespassword@postgres:5432/postgres
+  #     ## enable the console served by server
+  #     HASURA_GRAPHQL_ENABLE_CONSOLE: ${ENABLE_CONSOLE} # set to "false" to disable console
+  #     ## enable debugging mode. It is recommended to disable this in production
+  #     HASURA_GRAPHQL_DEV_MODE: "true"
+  #     HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
+  #     ## uncomment next line to set an admin secret
+  #     HASURA_GRAPHQL_ADMIN_SECRET: myadminsecretkey
+  #     EXTERNAL_API_ENDPOINT: http://${ACTION_SERVER_HOST}:${ACTION_SERVER_PORT}
+  #     HASURA_GRAPHQL_JWT_SECRET: '{"jwk_url":"http://${ACTION_SERVER_HOST}:${ACTION_SERVER_PORT}/api/jwk/list"}'
+  #     HASURA_GRAPHQL_UNAUTHORIZED_ROLE: unauthenticated
+
+
