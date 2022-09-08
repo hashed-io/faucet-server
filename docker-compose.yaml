@@ -9,7 +9,7 @@ services:
     volumes:
     - db_data:/var/lib/postgresql/data
     environment:
-      POSTGRES_PASSWORD: postgrespassword
+      POSTGRES_PASSWORD: ${PGPASSWORD}
 volumes:
   db_data:
 
