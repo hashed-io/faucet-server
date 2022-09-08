@@ -1,0 +1,5 @@
+version: '3.2'
+
+services:
+  faucet-server:
+    image: sebastianmontero/hashed-faucet-server-dev:latest

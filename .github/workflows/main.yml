@@ -1,0 +1,45 @@
+name: Hashed Faucet Server
+
+on:
+  push:
+    branches:
+    - dev
+    - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:      
+      - name: Set docker-image-name to testnet
+        if: endsWith(github.ref, '/dev')
+        run: |
+          echo "DOCKER_IMAGE_NAME=hashed-faucet-server-dev" >> $GITHUB_ENV
+          echo "DB_DOCKER_IMAGE_NAME=hashed-faucet-db-dev" >> $GITHUB_ENV
+      - name: Set docker-image-name to mainnet
+        if: endsWith(github.ref, '/master')
+        run: |
+          echo "DOCKER_IMAGE_NAME=hashed-faucet-server-prod" >> $GITHUB_ENV
+          echo "DB_DOCKER_IMAGE_NAME=hashed-faucet-db-prod" >> $GITHUB_ENV
+      - uses: actions/checkout@v1
+      - name: Docker login
+        run: docker login -u ${{ secrets.DOCKER_HUB_USER }} -p ${{ secrets.DOCKER_HUB_PASSWORD }}
+      - name: Build
+        run: docker build -t $DOCKER_IMAGE_NAME .
+      - name: Build db image
+        run: docker build -t $DB_DOCKER_IMAGE_NAME ./db
+      - name: Tag server image
+        run: |
+          docker tag $DOCKER_IMAGE_NAME ${{ secrets.DOCKER_HUB_USER }}/$DOCKER_IMAGE_NAME:${{ github.sha }}
+          docker tag $DOCKER_IMAGE_NAME ${{ secrets.DOCKER_HUB_USER }}/$DOCKER_IMAGE_NAME:latest
+      - name: Tag db image
+        run: |
+          docker tag $DB_DOCKER_IMAGE_NAME ${{ secrets.DOCKER_HUB_USER }}/$DB_DOCKER_IMAGE_NAME:${{ github.sha }}
+          docker tag $DB_DOCKER_IMAGE_NAME ${{ secrets.DOCKER_HUB_USER }}/$DB_DOCKER_IMAGE_NAME:latest
+      - name: Push
+        run: |
+          docker push ${{ secrets.DOCKER_HUB_USER }}/$DOCKER_IMAGE_NAME:${{ github.sha }}
+          docker push ${{ secrets.DOCKER_HUB_USER }}/$DOCKER_IMAGE_NAME:latest
+      - name: Push db image
+        run: |
+          docker push ${{ secrets.DOCKER_HUB_USER }}/$DB_DOCKER_IMAGE_NAME:${{ github.sha }}
+          docker push ${{ secrets.DOCKER_HUB_USER }}/$DB_DOCKER_IMAGE_NAME:latest

@@ -1,0 +1,20 @@
+version: '3.2'
+
+services:
+  faucet-server:
+    command: node src/index.js
+    ports:
+    - ${PORT}:${PORT}
+    environment:
+      PGHOST: ${PGHOST}
+      PGUSER: ${PGUSER}
+      PGDATABASE: ${PGDATABASE}
+      PGPASSWORD: ${PGPASSWORD}
+      PGPORT: ${PGPORT}
+      WSS: ${WSS}
+      FAUCET_ACCOUNT_SURI: ${FAUCET_ACCOUNT_SURI}
+      PORT: ${PORT}
+      NODE_ENV: ${NODE_ENV}
+    volumes:
+      - .:/faucet-server-code
+    restart: always

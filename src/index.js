@@ -109,7 +109,7 @@ async function main () {
     logger.transport = { target: 'pino-pretty' }
   }
   // Create the instance
-  const server = fastify({ logger, pluginTimeout: 20000 })
+  const server = fastify({ logger, pluginTimeout: 60000 })
   // Add application assets and manifest.json serving
   server.log.info(`cwd: ${process.cwd()}`)
   server.register(fastifyEnv, {
