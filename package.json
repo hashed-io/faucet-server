@@ -15,7 +15,8 @@
     "@fastify/env": "^4.1.0",
     "@fastify/swagger": "^7.5.0",
     "@polkadot/api": "^9.2.4",
-    "@polkadot/util": "^9.3.1",
+    "@polkadot/util": "^10.1.7",
+    "@polkadot/util-crypto": "^10.1.7",
     "@smontero/jwt": "^0.0.1",
     "fastify": "^4.5.3",
     "fastify-plugin": "^4.2.1",
@@ -25,8 +26,6 @@
     "url-join": "^5.0.0"
   },
   "devDependencies": {
-    "@polkadot/keyring": "^9.7.2",
-    "@polkadot/util-crypto": "^9.7.2",
     "@types/jest": "^27.5.1",
     "eslint": "^8.23.0",
     "eslint-config-standard": "^17.0.0",

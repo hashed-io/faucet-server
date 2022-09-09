@@ -1,7 +1,7 @@
 const fastify = require('fastify')
 const fp = require('fastify-plugin')
 const fastifyEnv = require('@fastify/env')
-const { Keyring } = require('@polkadot/keyring')
+const { Keyring } = require('@polkadot/api')
 const { JWT } = require('@smontero/jwt')
 const {
   AuthChannel,
