@@ -12,6 +12,9 @@ const SELECT_COLS =
   ac.distribution_amount "distributionAmount"
   `
 
+/**
+ * Provides the functionality to manage authentication channels
+ */
 class AuthChannel extends BaseDao {
   constructor (dbConn) {
     super({
@@ -21,6 +24,22 @@ class AuthChannel extends BaseDao {
     })
   }
 
+  /**
+   * @desc Finds an authentication channel by name
+   *
+   * @param {string} authName
+   *
+   * @return {Object} with the following structure
+   *  {
+   *    "authName": "hashed-portal-google",
+   *    "authProvider": "google",
+   *    "audience": "281519001757-5694ukk11kka29kcmq7ifdk6e4ci26dd.apps.googleusercontent.com",
+   *    "issuer": "https://accounts.google.com",
+   *    "keyUrl": "https://www.googleapis.com/oauth2/v3/certs",
+   *    "usernameClaim": "email",
+   *    "distributionAmount": 1000000000
+   *  }
+   */
   async findByName (authName) {
     return this.dbConn.singleRow(`
       SELECT ${SELECT_COLS}
@@ -30,6 +49,24 @@ class AuthChannel extends BaseDao {
     `,
     [authName])
   }
+
+  /**
+   * @desc Gets an authentication channel by name
+   *
+   * @param {string} authName
+   *
+   * @return {Object} with the following structure
+   *  {
+   *    "authName": "hashed-portal-google",
+   *    "authProvider": "google",
+   *    "audience": "281519001757-5694ukk11kka29kcmq7ifdk6e4ci26dd.apps.googleusercontent.com",
+   *    "issuer": "https://accounts.google.com",
+   *    "keyUrl": "https://www.googleapis.com/oauth2/v3/certs",
+   *    "usernameClaim": "email",
+   *    "distributionAmount": 1000000000
+   *  }
+   * @throws {NotFoundError} if the channel does not exist
+   */
 
   async getByName (authName) {
     const channel = await this.findByName(authName)
