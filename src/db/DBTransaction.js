@@ -6,7 +6,7 @@ class DBTransaction extends DBRequestProvider {
     this._client = client
   }
 
-  _client () {
+  client () {
     return this._client
   }
 
