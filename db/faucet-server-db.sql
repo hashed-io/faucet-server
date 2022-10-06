@@ -67,7 +67,8 @@ CREATE TABLE faucet.distribution (
     amount bigint NOT NULL,
     auth_name character varying(50) NOT NULL,
     username character varying(350) NOT NULL,
-    distributed_at timestamp with time zone NOT NULL
+    distributed_at timestamp with time zone NOT NULL,
+    user_id character varying(75) NOT NULL
 );
 
 
@@ -137,6 +138,13 @@ CREATE INDEX distribution_address_idx ON faucet.distribution USING btree (addres
 --
 
 CREATE INDEX distribution_distributed_at_idx ON faucet.distribution USING btree (distributed_at);
+
+
+--
+-- Name: distribution_user_id_idx; Type: INDEX; Schema: faucet; Owner: postgres
+--
+
+CREATE INDEX distribution_user_id_idx ON faucet.distribution USING btree (user_id);
 
 
 --

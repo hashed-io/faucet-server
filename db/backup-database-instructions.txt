@@ -11,6 +11,8 @@ pg_dump > faucet-server-db-with-data.sql
 pg_dump -s > faucet-server-db.sql
 
 #Copy file to host
-docker cp 2b0f47077b09:/var/lib/postgresql/faucet-server-db-with-data.sql .
+docker cp 2b0f47077b09:/var/lib/postgresql/faucet-server-db.sql .
+
+###REMEMBER TO ADD AUTH CHANNEL AND AUTH PROVIDERS TO DB WHEN DEPLOYING A NEW INSTANCE
 
 
