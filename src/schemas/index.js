@@ -1,5 +1,6 @@
 
 const addressSchema = { type: 'string', minLength: 30, maxLength: 55 }
+const userIdSchema = { type: 'string', minLength: 10, maxLength: 75 }
 const authNameSchema = { type: 'string', minLength: 3, maxLength: 50 }
 const publicKeySchema = { type: 'string', minLength: 53, maxLength: 53, nullable: true }
 
@@ -77,6 +78,7 @@ const response204 = {
 
 module.exports = {
   addressSchema,
+  userIdSchema,
   authNameSchema,
   publicKeySchema,
   emailTypeSchema,

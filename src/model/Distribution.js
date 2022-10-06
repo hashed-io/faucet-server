@@ -6,6 +6,7 @@ const SELECT_COLS =
   `
   d.distribution_id "distributionId",
   d.address,
+  d.user_id "userId",
   d.amount,
   d.auth_name "authName",
   d.username,
@@ -67,15 +68,25 @@ class Distribution extends BaseDao {
         audience
       }
     })
+    const { sub: userId } = payload
+    if (!userId) {
+      throw new BadRequest('No claim value found for sub claim')
+    }
     const username = payload[usernameClaim]
     if (!username) {
       throw new BadRequest(`No claim value found for username claim: ${usernameClaim}`)
     }
+
+    if (await this.findLastByUserId(userId) != null) {
+      throw new BadRequest(`Tokens have already been distributed to user with id: ${userId}`)
+    }
+
     if (await this.findLastByAddress(address) != null) {
       throw new BadRequest(`Tokens have already been distributed to address: ${address}`)
     }
     await this.insert({
       address,
+      userId,
       amount: distributionAmount,
       authName,
       username
@@ -93,6 +104,7 @@ class Distribution extends BaseDao {
    *  {
    *    "distributionId": 1,
    *    "address": "5CUosdLowQn5KdZgXFqzUxGs3962cCWr1L8txYSyGkwsSFJY",
+   *    "userId": "770beaea-bb6a-4006-ac2b-3316b98e0f14",
    *    "authName": "hashed-portal-google",
    *    "username": "pepe@gmail.com",
    *    "distributedAt": "2022-09-04 14:58:34.028"
@@ -109,6 +121,31 @@ class Distribution extends BaseDao {
   }
 
   /**
+   * @desc Finds last distribution details for a userId
+   *
+   * @param {string} userId
+   *
+   * @return {Object} with the following structure
+   *  {
+   *    "distributionId": 1,
+   *    "address": "5CUosdLowQn5KdZgXFqzUxGs3962cCWr1L8txYSyGkwsSFJY",
+   *    "userId": "770beaea-bb6a-4006-ac2b-3316b98e0f14",
+   *    "authName": "hashed-portal-google",
+   *    "username": "pepe@gmail.com",
+   *    "distributedAt": "2022-09-04 14:58:34.028"
+   *  }
+   */
+  async findLastByUserId (userId) {
+    return this.dbConn.singleRow(`
+      SELECT ${SELECT_COLS}
+      FROM ${this.table}
+      WHERE d.user_id = $1
+      ORDER BY d.distributed_at DESC
+    `,
+    [userId])
+  }
+
+  /**
    * @desc Inserts a distribution details to the database
    *
    * @param {string} address
@@ -119,16 +156,17 @@ class Distribution extends BaseDao {
    */
   async insert ({
     address,
+    userId,
     amount,
     authName,
     username
   }) {
     return this.dbConn.singleRow(`
     INSERT INTO ${this.tableName}
-    (address, amount, auth_name, username, distributed_at)
-    VALUES($1, $2, $3, $4, $5)
+    (address, user_id, amount, auth_name, username, distributed_at)
+    VALUES($1, $2, $3, $4, $5, $6)
     `,
-    [address, amount, authName, username, new Date()])
+    [address, userId, amount, authName, username, new Date()])
   }
 
   async _transfer (address, amount) {

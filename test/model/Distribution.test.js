@@ -1,6 +1,6 @@
 
 const { BadRequest } = require('http-errors')
-const { Keyring } = require('@polkadot/keyring')
+const { Keyring } = require('@polkadot/api')
 const { DBConnection } = require('../../src/db')
 const { Distribution, AuthChannel } = require('../../src/model')
 const { BalancesApi, Polkadot } = require('../../src/service')
@@ -35,7 +35,7 @@ describe('test distribute validations', () => {
       expect(error.message).toContain('Invalid signature of jwt by: address1')
     }
   })
-  test('should fail for invalid username claim', async () => {
+  test('should fail for non existant sub claim', async () => {
     spyVerifySignature(true)
     spyAuthChannelGetByName(1)
     spyJWTVerify({})
@@ -44,15 +44,47 @@ describe('test distribute validations', () => {
     } catch (error) {
       console.log(error)
       expect(error).toBeInstanceOf(BadRequest)
+      expect(error.message).toContain('No claim value found for sub claim')
+    }
+  })
+  test('should fail for invalid username claim', async () => {
+    spyVerifySignature(true)
+    spyAuthChannelGetByName(1)
+    spyJWTVerify({ sub: 'userIdValue' })
+    try {
+      await distribution.distribute(getDisitributePayload(1))
+    } catch (error) {
+      console.log(error)
+      expect(error).toBeInstanceOf(BadRequest)
       expect(error.message).toContain('No claim value found for username claim: usernameClaim1')
     }
   })
+
+  test('should fail for userId to which tokens have already been distributed', async () => {
+    spyVerifySignature(true)
+    const { channel } = spyAuthChannelGetByName(1)
+    spyJWTVerify({
+      [channel.usernameClaim]: 'userNameClaimValue',
+      sub: 'userIdValue'
+    })
+    spyDistributionFindLastByUserId(1)
+    try {
+      await distribution.distribute(getDisitributePayload(1))
+    } catch (error) {
+      console.log(error)
+      expect(error).toBeInstanceOf(BadRequest)
+      expect(error.message).toContain('Tokens have already been distributed to user with id: userIdValue')
+    }
+  })
+
   test('should fail for address to which tokens have already been distributed', async () => {
     spyVerifySignature(true)
     const { channel } = spyAuthChannelGetByName(1)
     spyJWTVerify({
-      [channel.usernameClaim]: 'userNameClaimValue'
+      [channel.usernameClaim]: 'userNameClaimValue',
+      sub: 'userIdValue'
     })
+    spyDistributionFindLastByUserId()
     spyDistributionFindLastByAddress(1)
     try {
       await distribution.distribute(getDisitributePayload(1))
@@ -70,7 +102,8 @@ describe('test distribution', () => {
     const { channel, channelGetByNameMock } = spyAuthChannelGetByName(1)
     const username = 'userNameClaimValue'
     const jwtVerifyMock = spyJWTVerify({
-      [channel.usernameClaim]: username
+      [channel.usernameClaim]: username,
+      sub: 'userIdValue'
     })
     const findLastByAddressMock = spyDistributionFindLastByAddress(null)
     const insertMock = jest.spyOn(distribution, 'insert').mockResolvedValue(true)
@@ -132,6 +165,11 @@ function spyAuthChannelGetByName (id) {
 
 function spyJWTVerify (payload) {
   return jest.spyOn(jwt, 'verify').mockResolvedValue({ payload })
+}
+
+function spyDistributionFindLastByUserId (id) {
+  const dist = id ? getDistribution(id) : null
+  return jest.spyOn(distribution, 'findLastByUserId').mockResolvedValue(dist)
 }
 
 function spyDistributionFindLastByAddress (id) {
