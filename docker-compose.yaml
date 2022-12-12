@@ -1,7 +1,7 @@
 version: '3.6'
 services:
   postgres:
-    image: faucet-db:latest
+    image: sebastianmontero/hashed-faucet-db-dev:latest
     restart: always
     # network_mode: "host"
     ports:
