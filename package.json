@@ -6,7 +6,9 @@
   "scripts": {
     "test": "jest --watch",
     "start:dev": "eval \"$(./set-env-dev.sh)\" npx nodemon src/index.js",
-    "start:uat": "eval \"$(./set-env-uat.sh)\" npx nodemon src/index.js"
+    "start:uat": "eval \"$(./set-env-uat.sh)\" npx nodemon src/index.js",
+    "start:all": "./start-all.sh",
+    "down:all": "./down-all.sh"
   },
   "author": "Sebastian",
   "license": "ISC",
