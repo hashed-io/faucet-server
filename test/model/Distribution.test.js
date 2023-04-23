@@ -101,9 +101,10 @@ describe('test distribution', () => {
     const verifySignatureMock = spyVerifySignature(true)
     const { channel, channelGetByNameMock } = spyAuthChannelGetByName(1)
     const username = 'userNameClaimValue'
+    const userId = 'userIdValue'
     const jwtVerifyMock = spyJWTVerify({
       [channel.usernameClaim]: username,
-      sub: 'userIdValue'
+      sub: userId
     })
     const findLastByAddressMock = spyDistributionFindLastByAddress(null)
     const insertMock = jest.spyOn(distribution, 'insert').mockResolvedValue(true)
@@ -144,6 +145,7 @@ describe('test distribution', () => {
       address,
       amount: distributionAmount,
       authName,
+      userId,
       username
     })
     expect(transferMock).toHaveBeenCalledTimes(1)
