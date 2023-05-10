@@ -77,8 +77,8 @@ class Distribution extends BaseDao {
       throw new BadRequest(`No claim value found for username claim: ${usernameClaim}`)
     }
 
-    if (await this.findLastByUserId(userId) != null) {
-      throw new BadRequest(`Tokens have already been distributed to user with id: ${userId}`)
+    if (await this.findLastByUserIdAndAuthName(userId, authName) != null) {
+      throw new BadRequest(`Tokens have already been distributed to user with id: ${userId} and auth name: ${authName}`)
     }
 
     if (await this.findLastByAddress(address) != null) {
@@ -124,6 +124,7 @@ class Distribution extends BaseDao {
    * @desc Finds last distribution details for a userId
    *
    * @param {string} userId
+   * @param {string} authName
    *
    * @return {Object} with the following structure
    *  {
@@ -135,14 +136,15 @@ class Distribution extends BaseDao {
    *    "distributedAt": "2022-09-04 14:58:34.028"
    *  }
    */
-  async findLastByUserId (userId) {
+  async findLastByUserIdAndAuthName (userId, authName) {
     return this.dbConn.singleRow(`
       SELECT ${SELECT_COLS}
       FROM ${this.table}
-      WHERE d.user_id = $1
+      WHERE d.user_id = $1 and
+      d.auth_name = $2
       ORDER BY d.distributed_at DESC
     `,
-    [userId])
+    [userId, authName])
   }
 
   /**

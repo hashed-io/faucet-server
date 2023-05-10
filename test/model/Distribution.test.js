@@ -67,13 +67,13 @@ describe('test distribute validations', () => {
       [channel.usernameClaim]: 'userNameClaimValue',
       sub: 'userIdValue'
     })
-    spyDistributionFindLastByUserId(1)
+    spyDistributionFindLastByUserIdAndAuthName(1)
     try {
       await distribution.distribute(getDisitributePayload(1))
     } catch (error) {
       console.log(error)
       expect(error).toBeInstanceOf(BadRequest)
-      expect(error.message).toContain('Tokens have already been distributed to user with id: userIdValue')
+      expect(error.message).toContain('Tokens have already been distributed to user with id: userIdValue and auth name: authName1')
     }
   })
 
@@ -84,7 +84,7 @@ describe('test distribute validations', () => {
       [channel.usernameClaim]: 'userNameClaimValue',
       sub: 'userIdValue'
     })
-    spyDistributionFindLastByUserId()
+    spyDistributionFindLastByUserIdAndAuthName()
     spyDistributionFindLastByAddress(1)
     try {
       await distribution.distribute(getDisitributePayload(1))
@@ -106,6 +106,7 @@ describe('test distribution', () => {
       [channel.usernameClaim]: username,
       sub: userId
     })
+    const findLastByUserIdAndAuthName = spyDistributionFindLastByUserIdAndAuthName(null)
     const findLastByAddressMock = spyDistributionFindLastByAddress(null)
     const insertMock = jest.spyOn(distribution, 'insert').mockResolvedValue(true)
     const transferMock = jest.spyOn(distribution, '_transfer').mockResolvedValue(true)
@@ -138,6 +139,8 @@ describe('test distribution', () => {
         audience
       }
     })
+    expect(findLastByUserIdAndAuthName).toHaveBeenCalledTimes(1)
+    expect(findLastByUserIdAndAuthName).toHaveBeenCalledWith('userIdValue', 'authName1')
     expect(findLastByAddressMock).toHaveBeenCalledTimes(1)
     expect(findLastByAddressMock).toHaveBeenCalledWith(address)
     expect(insertMock).toHaveBeenCalledTimes(1)
@@ -169,9 +172,9 @@ function spyJWTVerify (payload) {
   return jest.spyOn(jwt, 'verify').mockResolvedValue({ payload })
 }
 
-function spyDistributionFindLastByUserId (id) {
+function spyDistributionFindLastByUserIdAndAuthName (id) {
   const dist = id ? getDistribution(id) : null
-  return jest.spyOn(distribution, 'findLastByUserId').mockResolvedValue(dist)
+  return jest.spyOn(distribution, 'findLastByUserIdAndAuthName').mockResolvedValue(dist)
 }
 
 function spyDistributionFindLastByAddress (id) {
