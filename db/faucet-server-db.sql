@@ -148,9 +148,9 @@ CREATE INDEX distribution_address_idx ON faucet.distribution USING btree (addres
 CREATE INDEX distribution_distributed_at_idx ON faucet.distribution USING btree (distributed_at);
 
 --
--- Name: distribution_user_id_idx; Type: INDEX; Schema: faucet; Owner: postgres
+-- Name: distribution_user_id_auth_name_idx; Type: INDEX; Schema: faucet; Owner: postgres
 --
-CREATE INDEX distribution_user_id_idx ON faucet.distribution USING btree (user_id);
+CREATE INDEX distribution_user_id_auth_name_idx ON faucet.distribution (user_id,auth_name);
 
 --
 -- Name: auth_channel auth_channel_fk; Type: FK CONSTRAINT; Schema: faucet; Owner: postgres
