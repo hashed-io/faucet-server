@@ -186,6 +186,23 @@ VALUES
         'google'
     );
 
+INSERT INTO
+    faucet.auth_channel (
+        auth_name,
+        audience,
+        username_claim,
+        distribution_amount,
+        auth_provider
+    )
+VALUES
+    (
+        'afloat-portal-google',
+        '7985216537-gcduocqttdkt3bd9e949hpe6i2lmasnq.apps.googleusercontent.com',
+        'email',
+        1000000000,
+        'google'
+    );
+
 --
 -- PostgreSQL database dump complete
 --
