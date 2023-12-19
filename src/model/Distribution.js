@@ -84,6 +84,8 @@ class Distribution extends BaseDao {
     if (await this.findLastByAddress(address) != null) {
       throw new BadRequest(`Tokens have already been distributed to address: ${address}`)
     }
+    await this._transfer(address, distributionAmount)
+
     await this.insert({
       address,
       userId,
@@ -91,8 +93,6 @@ class Distribution extends BaseDao {
       authName,
       username
     })
-
-    await this._transfer(address, distributionAmount)
   }
 
   /**

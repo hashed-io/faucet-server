@@ -7,7 +7,7 @@ class BalancesApi extends BasePolkadotApi {
 
   async transfer ({ signer, dest, value }) {
     return this.callTx({
-      extrinsicName: 'transfer',
+      extrinsicName: 'transferAllowDeath',
       signer,
       params: [dest, value]
     })
